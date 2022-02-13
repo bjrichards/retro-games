@@ -4,7 +4,9 @@ import settings
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, up_key, down_key, left_key, right_key):
+    def __init__(
+        self, pos, groups, collision_sprites, up_key, down_key, left_key, right_key
+    ):
         super().__init__(groups)
         self.image = pygame.Surface((settings.PLAYER_WIDTH, settings.PLAYER_HEIGHT))
         self.image.fill(settings.PLAYER_COLOR)
@@ -19,6 +21,11 @@ class Player(pygame.sprite.Sprite):
         self.down_key_bool: bool = False
         self.left_key_bool: bool = False
         self.right_key_bool: bool = False
+
+        self.is_on_log: bool = False
+        self.log_position = (0, 0)
+
+        self.collision_sprites = collision_sprites
 
         # player movement
         self.direction = pygame.math.Vector2()
@@ -84,7 +91,41 @@ class Player(pygame.sprite.Sprite):
                 self.rect.center[1],  # type:ignore
             )  # type:ignore
 
-    def update(self):
+        # Rectify horizontal position
+        if not self.is_on_log:
+            if ((self.rect.center[0] - settings.PLAYER_WIDTH / 2) % self.speed) != 0:
+                take_closest = lambda num, collection: min(
+                    collection, key=lambda x: abs(x - num)
+                )
+                self.rect.center = (
+                    take_closest(
+                        self.rect.center[0],
+                        [
+                            self.rect.center[0] - self.rect.center[0] % self.speed,
+                            self.rect.center[0] + self.rect.center[0] % self.speed,
+                        ],
+                    )
+                    + self.speed / 2,
+                    self.rect.center[1],
+                )
+
+    def collisions(self):
+        for sprite in self.collision_sprites.sprites():
+            if sprite.rect.colliderect(self.rect):
+                if sprite.type == "log":
+                    self.is_on_log = True
+                    self.log_position = sprite.rect.center
+
+                    return
+                else:
+                    self.is_on_log = False
+            else:
+                self.is_on_log = False
+
+    def update(self, dt):
         self.input()
         self.rect.center += self.direction * self.speed  # type:ignore
+        self.collisions()
+        if self.is_on_log:
+            self.rect.center = self.log_position  # type:ignore
         self.rectify_position()

@@ -19,12 +19,13 @@ def main() -> None:
                 pygame.quit()
                 sys.exit()
 
+        dt = clock.tick(60)
+
         screen.fill(settings.BG_COLOR)
-        level.run()
+        level.run(dt)
 
         # drawing logic
         pygame.display.update()
-        clock.tick(60)
 
 
 if __name__ == "__main__":

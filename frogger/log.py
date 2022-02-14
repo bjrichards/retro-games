@@ -8,18 +8,18 @@ class Log(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = pygame.Surface((width, height))
         self.image.fill(color)
-        self.rect = self.image.get_rect(center=pos)
+        self.rect: pygame.rect.Rect = self.image.get_rect(center=pos)
 
-        self.type = "log"
+        self.type: str = "log"
 
         # player movement
-        self.direction = direction
-        self.speed = speed
+        self.direction: pygame.math.Vector2 = direction
+        self.speed: pygame.math.Vector2 = speed
 
-        self.pos = pos
+        self.pos: tuple = pos
 
     def update(self, dt):
         x = self.direction[0] * self.speed * dt + self.pos[0]
         y = self.direction[1] * self.speed * dt + self.pos[1]
         self.pos = (x, y)
-        self.rect.center = round(x), round(y)  # type:ignore
+        self.rect.center = (round(x), round(y))

@@ -25,7 +25,7 @@ class Level:
         river.River(
             [self.background_sprites, self.active_sprites],
             2,
-            ["LOG_1", "LOG_2"],
+            ["LOG_1"],
             [self.active_sprites, self.transport_sprites, self.collision_sprites],
             1,
             1,
@@ -33,7 +33,7 @@ class Level:
         river.River(
             [self.background_sprites, self.active_sprites],
             3,
-            ["LOG_1", "LOG_2", "LOG_3"],
+            ["LOG_1"],
             [self.active_sprites, self.transport_sprites, self.collision_sprites],
             1,
             -1,
